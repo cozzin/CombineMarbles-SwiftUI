@@ -9,7 +9,8 @@
 import SwiftUI
 
 struct MarbleView: View {
-    let values: [MarbleElementType]
+    @State
+    var values: [MarbleElementType]
     private let maxTime: CGFloat = 1000.0
     var body: some View {
         GeometryReader {geometry in
@@ -17,10 +18,20 @@ struct MarbleView: View {
                 TimelineView()
                     .padding([.leading, .trailing])
                 Group {
-                    ForEach(self.values.identified(by: \.time)) {element in
+                    ForEach(self.values) { element in
                         CircleView(circleColor: element.color, title: element.value)
                             .padding(.bottom, 20)
                             .offset(x: (geometry.size.width / self.maxTime) * element.time)
+                            .gesture(DragGesture()
+                                .onChanged { state in
+                                    self.values = self.values.map {
+                                        if $0.id == element.id {
+                                            return $0.mutatingTime(state.location.x / (geometry.size.width / self.maxTime))
+                                        }
+                                        return $0
+                                    }
+                                }
+                        )
                     }
                 }
                 }.fixedSize()

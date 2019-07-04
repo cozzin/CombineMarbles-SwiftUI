@@ -10,10 +10,19 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct MarbleElementType {
+struct MarbleElementType: Identifiable {
+    let id: UUID = UUID()
     let value: String
     let color: Color
     let time: CGFloat
+    
+    func mutatingTime(_ time: CGFloat) -> MarbleElementType {
+        MarbleElementType(
+            value: value,
+            color: color,
+            time: time
+        )
+    }
 }
 
 struct OperatorMarbleValues {
